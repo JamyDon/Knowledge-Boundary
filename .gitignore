@@ -1,6 +1,6 @@
 model/
 .vscode/
-*.parque
+*.parquet
 *.safetensors
 
 # Byte-compiled / optimized / DLL files
