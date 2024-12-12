@@ -1,4 +1,5 @@
 import random
+import json
 
 from utils import read_splited_data
 from inference import inference, decode_for_classification
@@ -97,11 +98,14 @@ def prompting(prompt_templates, evaluate_data, train_data, batch_size):
         print(metrics)
         print("="*50)
 
+        with open(f'result/{prompt_template}.json', 'w') as f:
+            json.dump(metrics, f, indent=4)
+
 
 def main():
     prompt_templates = ['vanilla', 'icl', 'less_overabstention']
     train_data, valid_data, test_data = read_splited_data()
-    batch_size = 8
+    batch_size = 16
 
     prompting(prompt_templates, test_data, train_data, batch_size)
 

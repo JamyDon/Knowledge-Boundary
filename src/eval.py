@@ -10,14 +10,19 @@ def evaluate(answers, data):
     RAcc = calc_RAcc(N1, N2, N3, N4, N5)
 
     return {
-        'Abstention Accuracy': ACC,
-        'Abstention Precision': Precision,
-        'Abstention Recall': Recall,
-        'Abstention F1': F1,
-        'Coverage': Coverage,
-        'Abstention Rate': AbstentionRate,
-        'Over-conservativeness': ASAP,
-        'Reliable Accuracy': RAcc
+        'Known Correct (N1)': N1,
+        'Known Incorrect (N2)': N2,
+        'Known Abstention (N3)': N3,
+        'Unknown Non-Abstention (N4)': N4,
+        'Unknown Abstention (N5)': N5,
+        'Abstention Accuracy': round(ACC * 100, 3),
+        'Abstention Precision': round(Precision * 100, 3),
+        'Abstention Recall': round(Recall * 100, 3),
+        'Abstention F1': round(F1 * 100, 3),
+        'Coverage': round(Coverage * 100, 3),
+        'Abstention Rate': round(AbstentionRate * 100, 3),
+        'Over-conservativeness': round(ASAP * 100, 3),
+        'Reliable Accuracy': round(RAcc * 100, 3),
     }
 
 
