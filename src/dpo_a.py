@@ -35,7 +35,7 @@ def prepare_dpo_data(raw_data_dir: str, output_dir: str, size=-1, abstention_rat
     unknown_size = len(unknown_data)
     unknown_data = random.sample(unknown_data, int(unknown_size * abstention_rate))
     alles_data = known_data + unknown_data
-    size = size if size > 0 else len(alles_data)
+    # size = size if size > 0 else len(alles_data)
     # dpo_train_data = random.sample(alles_data, size)
 
     jsonlines = []
@@ -73,6 +73,7 @@ def prepare_dpo_data(raw_data_dir: str, output_dir: str, size=-1, abstention_rat
 
                 jsonlines.append(json.dumps(dpo_datum))
 
+    size = size if size > 0 else len(jsonlines)
     jsonlines = random.sample(jsonlines, size)
 
     with open(output_dir, "w") as f:

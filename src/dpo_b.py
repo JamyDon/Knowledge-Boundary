@@ -35,7 +35,7 @@ def prepare_dpo_data(raw_data_dir: str, output_dir: str, size=-1, abstention_rat
     unknown_size = len(unknown_data)
     unknown_data = random.sample(unknown_data, int(unknown_size * abstention_rate))
     alles_data = known_data + unknown_data
-    size = size if size > 0 else len(alles_data)
+    # size = size if size > 0 else len(alles_data)
     # dpo_train_data = random.sample(alles_data, size)
 
     jsonlines = []
@@ -85,6 +85,7 @@ def prepare_dpo_data(raw_data_dir: str, output_dir: str, size=-1, abstention_rat
 
                 jsonlines.append(json.dumps(dpo_datum))
 
+    size = size if size > 0 else len(jsonlines)
     jsonlines = random.sample(jsonlines, size)
 
     with open(output_dir, "w") as f:
@@ -133,5 +134,13 @@ def dpo_on_valid(train_size=32, train_abs_rate=0.3, inference_batch_size=16):
     print(f"Result is saved at {result_dir}")
 
 
+def train_1024():
+    train_size = 1024
+    train_abs_rates = [0.0, 0.1, 0.3, 0.5, 0.7, 1.0]
+
+    for train_abs_rate in train_abs_rates:
+        dpo_on_valid(train_size=train_size, train_abs_rate=train_abs_rate)
+
+
 if __name__ == "__main__":
-    dpo_on_valid(train_size=32, train_abs_rate=1.0, inference_batch_size=16)
+    train_1024()
