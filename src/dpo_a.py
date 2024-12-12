@@ -86,7 +86,7 @@ def dpo_train(output_dir: str, dataset_dir: str, model_dir="model/meta-llama/Lla
     train_dataset = load_dataset("json", data_files=dataset_dir, split="train")
 
     training_args = DPOConfig(output_dir=output_dir, logging_steps=10)
-    trainer = DPOTrainer(model=model, args=training_args, processing_class=tokenizer, train_dataset=train_dataset)
+    trainer = DPOTrainer(model=model, args=training_args, processing_class=tokenizer, train_dataset=train_dataset, max_length=256)
     trainer.train()
 
 
@@ -121,5 +121,13 @@ def dpo_on_valid(train_size=32, train_abs_rate=0.3, inference_batch_size=16):
     print(f"Result is saved at {result_dir}")
 
 
+def train_1024():
+    train_size = 1024
+    train_abs_rates = [0.0, 0.1, 0.3, 0.5, 0.7, 0.9, 1.0]
+
+    for train_abs_rate in train_abs_rates:
+        dpo_on_valid(train_size=train_size, train_abs_rate=train_abs_rate)
+
+
 if __name__ == "__main__":
-    dpo_on_valid(train_size=32, train_abs_rate=1.0, inference_batch_size=16)
+    train_1024()
