@@ -10,6 +10,8 @@ def apply_prompt_template(prompt_template, evaluate_data, train_data):
         return vanilla_prompt(evaluate_data)
     elif prompt_template == 'icl':
         return icl_prompt(evaluate_data, train_data)
+    elif prompt_template == 'less_overabstention':
+        return less_overabstention_prompt(evaluate_data)
     else:
         raise ValueError(f'Invalid prompt template: {prompt_template}')
 
@@ -69,6 +71,20 @@ def icl_prompt(evaluate_data, train_data):
     return prompts
 
 
+def less_overabstention_prompt(evaluate_data):
+    prompts = []
+
+    for evaluate_datum in evaluate_data:
+        question, choises = evaluate_datum['question'], evaluate_datum['choices']
+        prompt = f'Question:{question}\n'
+        prompt += f'Choices: A. {choises[0]} B. {choises[1]} C. {choises[2]} D. {choises[3]} E. I don\'t know\n'
+        prompt += 'Instruction: Select the correct answer from the choices above. You may select "E" only if you do not know the answer. Otherwise, please select the correct answer from "A", "B", "C", or "D". You must not select "E" if you know the answer. Answer the letter ("A", "B", "C", "D", "E") only.\n'
+        prompt += 'Answer: '
+        prompts.append(prompt)
+
+    return prompts
+
+
 def prompting(prompt_templates, evaluate_data, train_data, batch_size):
     for prompt_template in prompt_templates:
         prompts = apply_prompt_template(prompt_template, evaluate_data, train_data)
@@ -83,7 +99,7 @@ def prompting(prompt_templates, evaluate_data, train_data, batch_size):
 
 
 def main():
-    prompt_templates = ['vanilla', 'icl']
+    prompt_templates = ['vanilla', 'icl', 'less_overabstention']
     train_data, valid_data, test_data = read_splited_data()
     batch_size = 8
 
