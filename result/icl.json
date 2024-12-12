@@ -1,0 +1,15 @@
+{
+    "Known Correct (N1)": 277.0,
+    "Known Incorrect (N2)": 150.0,
+    "Known Abstention (N3)": 51.0,
+    "Unknown Non-Abstention (N4)": 812.0,
+    "Unknown Abstention (N5)": 115.0,
+    "Abstention Accuracy": 27.9,
+    "Abstention Precision": 69.277,
+    "Abstention Recall": 10.678,
+    "Abstention F1": 18.504,
+    "Coverage": 88.185,
+    "Abstention Rate": 11.815,
+    "Over-conservativeness": 10.669,
+    "Reliable Accuracy": 22.357
+}
