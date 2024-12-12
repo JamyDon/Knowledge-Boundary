@@ -20,7 +20,7 @@ def prepare_dpo_data(raw_data_dir: str, output_dir: str, size=-1, abstention_rat
 
     short_raw_data = []
     for datum in raw_data:
-        if len(datum["question"].split()) + len(datum["choices"][0].split()) + len(datum["choices"][1].split()) + len(datum["choices"][2].split()) + len(datum["choices"][3].split()) < 128:
+        if len(datum["question"].split()) + len(datum["choices"][0].split()) + len(datum["choices"][1].split()) + len(datum["choices"][2].split()) + len(datum["choices"][3].split()) < 64:
             short_raw_data.append(datum)
 
     print(f"Short raw data size: {len(short_raw_data)}")
@@ -85,8 +85,8 @@ def dpo_train(output_dir: str, dataset_dir: str, model_dir="model/meta-llama/Lla
     tokenizer.pad_token = tokenizer.eos_token
     train_dataset = load_dataset("json", data_files=dataset_dir, split="train")
 
-    training_args = DPOConfig(output_dir=output_dir, logging_steps=10)
-    trainer = DPOTrainer(model=model, args=training_args, processing_class=tokenizer, train_dataset=train_dataset, max_length=256)
+    training_args = DPOConfig(output_dir=output_dir, logging_steps=10, max_length=256)
+    trainer = DPOTrainer(model=model, args=training_args, processing_class=tokenizer, train_dataset=train_dataset)
     trainer.train()
 
 
@@ -123,7 +123,7 @@ def dpo_on_valid(train_size=32, train_abs_rate=0.3, inference_batch_size=16):
 
 def train_1024():
     train_size = 1024
-    train_abs_rates = [0.0, 0.1, 0.3, 0.5, 0.7, 0.9, 1.0]
+    train_abs_rates = [0.05]
 
     for train_abs_rate in train_abs_rates:
         dpo_on_valid(train_size=train_size, train_abs_rate=train_abs_rate)

@@ -20,7 +20,7 @@ def prepare_dpo_data(raw_data_dir: str, output_dir: str, size=-1, abstention_rat
 
     short_raw_data = []
     for datum in raw_data:
-        if len(datum["question"].split()) + len(datum["choices"][0].split()) + len(datum["choices"][1].split()) + len(datum["choices"][2].split()) + len(datum["choices"][3].split()) < 128:
+        if len(datum["question"].split()) + len(datum["choices"][0].split()) + len(datum["choices"][1].split()) + len(datum["choices"][2].split()) + len(datum["choices"][3].split()) < 64:
             short_raw_data.append(datum)
 
     print(f"Short raw data size: {len(short_raw_data)}")
