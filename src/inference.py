@@ -10,7 +10,7 @@ def inference(prompts: list, batch_size: int, model_name="model/meta-llama/Llama
     device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
     tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side='left')
     tokenizer.pad_token = tokenizer.eos_token
-    model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto", torch_dtype=torch.float16)
+    model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float16)
     model.to(device)
     model.eval()
     gen_config = GenerationConfig(
