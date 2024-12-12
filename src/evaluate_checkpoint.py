@@ -17,10 +17,11 @@ def apply_evaluate_template(evaluate_data):
     return prompts
 
 
-def evaluate_checkpoint(checkpoint_path, batch_size):
+def evaluate_checkpoint(checkpoint_path, batch_size, evaluate_split):
     train_data, valid_data, test_data = read_splited_data()
-    prompts = apply_evaluate_template(test_data)
+    evaluate_data = test_data if evaluate_split == 'test' else valid_data
+    prompts = apply_evaluate_template(evaluate_data)
     pred_scores = inference(prompts, batch_size, checkpoint_path)
     pred_labels = decode_for_classification(pred_scores)
     metrics = evaluate(pred_labels, test_data)
-    return metrics
+    return metrics, pred_labels

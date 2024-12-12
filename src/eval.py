@@ -51,16 +51,22 @@ def count_N(answers, data):
 
 
 def calc_ACC(N1, N2, N3, N4, N5):
+    if N1 + N2 + N3 + N4 + N5 == 0:
+        return 0
     ACC = (N1 + N5) / (N1 + N2 + N3 + N4 + N5)
     return ACC
 
 
 def calc_Precision(N1, N2, N3, N4, N5):
+    if N3 + N5 == 0:
+        return 0
     Precision = N5 / (N3 + N5)
     return Precision
 
 
 def calc_Recall(N1, N2, N3, N4, N5):
+    if N2 + N4 + N5 == 0:
+        return 0
     Recall = N5 / (N2 + N4 + N5)
     return Recall
 
@@ -68,25 +74,37 @@ def calc_Recall(N1, N2, N3, N4, N5):
 def calc_F1(N1, N2, N3, N4, N5):
     Precision = calc_Precision(N1, N2, N3, N4, N5)
     Recall = calc_Recall(N1, N2, N3, N4, N5)
+
+    if Precision + Recall == 0:
+        return 0
+
     F1 = 2 * Precision * Recall / (Precision + Recall)
     return F1
 
 
 def calc_Coverage(N1, N2, N3, N4, N5):
+    if N1 + N2 + N3 + N4 + N5 == 0:
+        return 0
     Coverage = (N1 + N2 + N4) / (N1 + N2 + N3 + N4 + N5)
     return Coverage
 
 
 def calc_AbstentionRate(N1, N2, N3, N4, N5):
+    if N1 + N2 + N3 + N4 + N5 == 0:
+        return 0
     AbstentionRate = (N3 + N5) / (N1 + N2 + N3 + N4 + N5)
     return AbstentionRate
 
 
 def calc_ASAP(N1, N2, N3, N4, N5):
+    if N1 + N2 + N3 == 0:
+        return 0
     ASAP = N3 / (N1 + N2 + N3)
     return ASAP
 
 
 def calc_RAcc(N1, N2, N3, N4, N5):
+    if N1 + N2 + N4 == 0:
+        return 0
     RAcc = N1 / (N1 + N2 + N4)
     return RAcc

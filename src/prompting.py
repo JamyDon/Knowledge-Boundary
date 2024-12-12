@@ -98,8 +98,14 @@ def prompting(prompt_templates, evaluate_data, train_data, batch_size):
         print(metrics)
         print("="*50)
 
+        result = {
+            'prompt_template': prompt_template,
+            'metrics': metrics,
+            'pred_labels': pred_labels,
+        }
+
         with open(f'result/{prompt_template}.json', 'w') as f:
-            json.dump(metrics, f, indent=4)
+            json.dump(result, f, indent=4)
 
 
 def main():
