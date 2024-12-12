@@ -1,7 +1,9 @@
 import json
 import random
+import pandas as pd
 
 file_in = "../data/labeled_mmlu.json"
+file_in_2 = "../data/raw_data.parquet"
 file_out_1 = "../data/train.json"
 file_out_2 = "../data/val.json"
 file_out_3 = "../data/test.json"
@@ -9,14 +11,15 @@ file_out_3 = "../data/test.json"
 with open(file_in, 'r',encoding='utf-8') as f:
     labeled_data = json.load(f)
 
-prefect_data = []
+df = pd.read_parquet(file_in_2)
 
+prefect_data = []
 for i in range(len(labeled_data)):
     data = {}
-    data["question"] = labeled_data[i]["question"]
-    data["subject"] = labeled_data[i]["subject"]
-    data["choices"] = labeled_data[i]["choices"]
-    data["answer"] = labeled_data[i]["answer"]
+    data["question"] = df.loc[i]["question"]
+    data["subject"] = df.loc[i]["subject"]
+    data["choices"] = df.loc[i]["choices"].tolist()
+    data["answer"] = int(df.loc[i]["answer"])
     data["knowledge boundary"] = labeled_data[i]["knowledge boundary"]["Correctness"]["result"]
     prefect_data.append(data)
 
@@ -43,8 +46,8 @@ for i in arr3:
     test_data.append(prefect_data[i])
 
 with open(file_out_1, 'w',encoding='utf-8') as f:
-    json.dump(train_data, f, ensure_ascii=False)
+    json.dump(train_data, f, ensure_ascii=False, indent=4)  
 with open(file_out_2, 'w',encoding='utf-8') as f:
-    json.dump(val_data, f, ensure_ascii=False)
+    json.dump(val_data, f, ensure_ascii=False, indent=4)
 with open(file_out_3, 'w',encoding='utf-8') as f:
-    json.dump(test_data, f, ensure_ascii=False)
+    json.dump(test_data, f, ensure_ascii=False, indent=4)
