@@ -136,7 +136,7 @@ def dpo_on_valid(train_size=32, train_abs_rate=0.3, inference_batch_size=16):
 
 def train_1024():
     train_size = 1024
-    train_abs_rates = [0.0, 0.1, 0.3, 0.5, 0.7, 1.0]
+    train_abs_rates = [0.5]
 
     for train_abs_rate in train_abs_rates:
         dpo_on_valid(train_size=train_size, train_abs_rate=train_abs_rate)
