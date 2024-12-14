@@ -3,7 +3,7 @@
 import json
 import random
 import os
-
+import torch
 from datasets import load_dataset
 from trl import DPOConfig, DPOTrainer
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -81,7 +81,7 @@ def prepare_dpo_data(raw_data_dir: str, output_dir: str, size=-1, abstention_rat
 
 
 def dpo_train(output_dir: str, dataset_dir: str, model_dir="model/meta-llama/Llama-3.2-3B-Instruct"):
-    model = AutoModelForCausalLM.from_pretrained(model_dir, device_map="auto")
+    model = AutoModelForCausalLM.from_pretrained(model_dir, device_map="auto", torch_dtype=torch.bfloat16)
     tokenizer = AutoTokenizer.from_pretrained(model_dir)
     tokenizer.pad_token = tokenizer.eos_token
     train_dataset = load_dataset("json", data_files=dataset_dir, split="train")
@@ -122,13 +122,54 @@ def dpo_on_valid(train_size=32, train_abs_rate=0.3, inference_batch_size=16):
     print(f"Result is saved at {result_dir}")
 
 
-def train_1024():
-    train_size = 1024
-    train_abs_rates = [0.03]
+def dpo_on_valid_and_test(train_size=32, train_abs_rate=0.3, inference_batch_size=16):
+    raw_data_dir = "data/train.json"
+    dpo_data_dir = f"data/dpo_a/{train_size}_{train_abs_rate}.json"
+    output_dir = f"ckpt/dpo_a/{train_size}_{train_abs_rate}"
+    result_dir = f"result/dpo_a/{train_size}_{train_abs_rate}.json"
+
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    
+    prepare_dpo_data(raw_data_dir, dpo_data_dir, size=train_size, abstention_rate=train_abs_rate)
+
+    dpo_train(output_dir, dpo_data_dir)
+
+    checkpoint_dirs = os.listdir(output_dir)
+    max_index = 0
+    max_index_dir = ""
+    for checkpoint_dir in checkpoint_dirs:
+        index = int(checkpoint_dir.split("-")[-1])
+        if index > max_index:
+            max_index = index
+            max_index_dir = checkpoint_dir
+    checkpoint_dir = max_index_dir
+    checkpoint_dir = os.path.join(output_dir, checkpoint_dir)
+
+    val_metrics, pred_labels = evaluate_checkpoint(checkpoint_dir, batch_size=inference_batch_size, evaluate_split="valid")
+    test_metrics, _ = evaluate_checkpoint(checkpoint_dir, batch_size=inference_batch_size, evaluate_split="test")
+    result = {
+        "train_size": train_size,
+        "train_abs_rate": train_abs_rate,
+        "test_metrics": test_metrics,
+        "valid_metrics": val_metrics,
+        "pred_labels": pred_labels,
+    }
+
+    with open(result_dir, "w") as f:
+        json.dump(result, f, indent=4)
+
+    print(f"Metrics: {test_metrics}")
+    print(f"Result is saved at {result_dir}")
+
+
+def train_full():
+    train_size = -1
+    train_abs_rates = [0.05, 0.1, 0.5, 1.0]
 
     for train_abs_rate in train_abs_rates:
-        dpo_on_valid(train_size=train_size, train_abs_rate=train_abs_rate)
+        dpo_on_valid_and_test(train_size=train_size, train_abs_rate=train_abs_rate)
 
 
 if __name__ == "__main__":
-    train_1024()
+    train_full()
