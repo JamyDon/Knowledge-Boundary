@@ -105,9 +105,9 @@ def dpo_train(output_dir: str, dataset_dir: str, model_dir="model/meta-llama/Lla
 
 def dpo_on_valid(train_size=32, train_abs_rate=0.3, inference_batch_size=16):
     raw_data_dir = "data/train.json"
-    dpo_data_dir = f"data/dpo_b/{train_size}_{train_abs_rate}.json"
-    output_dir = f"ckpt/dpo_b/{train_size}_{train_abs_rate}"
-    result_dir = f"result/dpo_b/{train_size}_{train_abs_rate}.json"
+    dpo_data_dir = f"data/dpo_c/{train_size}_{train_abs_rate}.json"
+    output_dir = f"ckpt/dpo_c/{train_size}_{train_abs_rate}"
+    result_dir = f"result/dpo_c/{train_size}_{train_abs_rate}.json"
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -136,9 +136,9 @@ def dpo_on_valid(train_size=32, train_abs_rate=0.3, inference_batch_size=16):
 
 def dpo_on_valid_and_test(train_size=32, train_abs_rate=0.3, inference_batch_size=16, model_dir="model/meta-llama/Llama-3.2-3B-Instruct"):
     raw_data_dir = "data/train.json"
-    dpo_data_dir = f"data/dpo_b/{train_size}_{train_abs_rate}.json"
-    output_dir = f"ckpt/dpo_b/{train_size}_{train_abs_rate}"
-    result_dir = f"result/dpo_b/{train_size}_{train_abs_rate}.json"
+    dpo_data_dir = f"data/dpo_c/{train_size}_{train_abs_rate}.json"
+    output_dir = f"ckpt/dpo_c/{train_size}_{train_abs_rate}"
+    result_dir = f"result/dpo_c/{train_size}_{train_abs_rate}.json"
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -175,21 +175,13 @@ def dpo_on_valid_and_test(train_size=32, train_abs_rate=0.3, inference_batch_siz
     print(f"Result is saved at {result_dir}")
 
 
-def train_full():
-    train_size = -1
-    train_abs_rates = [1.0]
-
-    for train_abs_rate in train_abs_rates:
-        dpo_on_valid_and_test(train_size=train_size, train_abs_rate=train_abs_rate)
-
-
 def train_full_from_sft():
     train_size = -1
     train_abs_rates = [1.0]
 
     for train_abs_rate in train_abs_rates:
-        dpo_on_valid_and_test(train_size=train_size, train_abs_rate=train_abs_rate, model_dir="ckpt/sft/-1_0.25/checkpoint")
+        dpo_on_valid_and_test(train_size=train_size, train_abs_rate=train_abs_rate, model_dir="ckpt/sft/-1_0.1/checkpoint-1122")
 
 
 if __name__ == "__main__":
-    train_full()
+    train_full_from_sft()

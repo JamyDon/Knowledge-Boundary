@@ -86,25 +86,32 @@ def less_overabstention_prompt(evaluate_data):
     return prompts
 
 
-def prompting(prompt_templates, evaluate_data, train_data, batch_size):
+def prompting(prompt_templates, valid_data, test_data, train_data, batch_size):
     for prompt_template in prompt_templates:
-        prompts = apply_prompt_template(prompt_template, evaluate_data, train_data)
-        pred_scores = inference(prompts, batch_size)
-        pred_labels = decode_for_classification(pred_scores)
-        metrics = evaluate(pred_labels, evaluate_data)
+        val_prompts = apply_prompt_template(prompt_template, valid_data, train_data)
+        val_pred_scores = inference(val_prompts, batch_size)
+        val_pred_labels = decode_for_classification(val_pred_scores)
+        val_metrics = evaluate(val_pred_labels, valid_data)
+
+        test_prompts = apply_prompt_template(prompt_template, test_data, train_data)
+        test_pred_scores = inference(test_prompts, batch_size)
+        test_pred_labels = decode_for_classification(test_pred_scores)
+        test_metrics = evaluate(test_pred_labels, test_data)
 
         print("="*50)
         print(f'Prompt template: {prompt_template}')
-        print(metrics)
+        print(val_metrics)
+        print(test_metrics)
         print("="*50)
 
         result = {
             'prompt_template': prompt_template,
-            'metrics': metrics,
-            'pred_labels': pred_labels,
+            'test_metrics': test_metrics,
+            'valid_metrics': val_metrics,
+            'pred_labels': val_pred_labels,
         }
 
-        with open(f'result/{prompt_template}.json', 'w') as f:
+        with open(f'result/prompting/{prompt_template}.json', 'w') as f:
             json.dump(result, f, indent=4)
 
 
@@ -113,7 +120,7 @@ def main():
     train_data, valid_data, test_data = read_splited_data()
     batch_size = 16
 
-    prompting(prompt_templates, test_data, train_data, batch_size)
+    prompting(prompt_templates, valid_data, test_data, train_data, batch_size)
 
 
 if __name__ == '__main__':
